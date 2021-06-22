@@ -1,0 +1,84 @@
+% Data
+
+
+```{r setup, include=FALSE}
+library(readxl)
+library(tidyr)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+```
+
+
+## Read data 
+ 
+The raw data were organized in excel sheets. Let's load all sheets using the `read_excel` function and bind using `bind_rows` to make a single data set.
+
+```{r}
+path <- "data/Summary of raw data for CLR Epidemic 1.xlsx"
+
+data <- read_excel(path, sheet = "Agaro") %>% 
+  bind_rows(
+    read_excel(path, sheet = "Gera"),
+    read_excel(path, sheet = "Jimma"),
+    read_excel(path, sheet = "Metu"),
+    read_excel(path, sheet = "Tepi")
+  )
+
+```
+
+### Data cleaning
+
+- The data from Jimma got some empty cells in the `Year` column that need to be removed. 
+- Some variety names are duplicate, in some manner, that needs to be fixed. 
+
+```{r}
+CLR <- data %>%
+  filter(!is.na(year)) %>% 
+  mutate(variety = recode(variety, "7475" = "7454", "741140" = "74140", "f-35" = "F-35", "f-59" = "F-59"))
+```
+
+### Store data as .csv file
+
+```{r}
+write.csv(CLR, "data/CLR.csv")
+```
+
+## AUDPC calculation
+
+### CLR Severity
+
+```{r}
+library(agricolae)
+
+Sev <- CLR %>%
+    mutate(month = recode(month, `8` = 1, `9` = 2, `10` = 3, `11` = 4, `12` = 5, `1` = 6, `2` = 7, `3` = 8, `4` = 9, `5` = 10, `6` = 11, `7` = 12)) %>%
+  select(year, site, variety, tree, branch, month, severity) %>%
+  group_by(year, site, variety, tree, branch, month) %>%
+  mutate(rn = row_number()) %>% 
+  ungroup %>%
+  spread(month, severity) %>%
+  mutate_if(is.numeric, ~replace_na(., 0))
+
+ratings<- Sev[,c(7:18)]
+
+#For Months
+months<-c(1,2,3,4,5,6,7,8,9,10,11,12)
+Sev$AUDPCm <- audpc(ratings, months, type="absolute")
+
+# For days
+days<-c(1,32,62,93,123,154,185,213,244,274,305,335)
+Sev$AUDPCd <- audpc(ratings, days, type="absolute")
+
+# Unlist AUDPC values
+Sev$AUDPCm <- as.numeric(unlist(Sev$AUDPCm))
+```
+
+### Store data as .csv file
+
+```{r}
+Sev %>% 
+  select(-AUDPCd) %>%
+  write.csv("data/clr_audpc.csv")
+```
+
