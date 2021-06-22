@@ -1,0 +1,435 @@
+% Mixed Models
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(tidyverse)
+library(cowplot)
+library(ggthemes)
+library(gt)
+theme_set(theme_minimal_grid())
+
+```
+
+# Setup
+
+## Read data
+
+```{r}
+dat <- read_csv("data/clr_audpc.csv")
+```
+
+## Prepare variables
+
+```{r}
+# Calculate max. severity column
+dat1 <- dat %>% 
+  group_by(X1) %>% 
+  mutate(max = max(`1`,`2`,`3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, `11`, `12`))
+
+# Calculate mean AUDPC and Max. severity  
+sev <- dat1 %>% 
+  group_by(year, site, variety, tree) %>% 
+  summarize(mean_max = mean(max), mean_audpc = mean(AUDPCm))  
+```
+
+
+# Data exploration
+
+## Relationship between AUDPC and disease severity
+
+```{r}
+sev %>%  
+    ggplot(aes(log(mean_max), log(mean_audpc)))+
+  geom_point()
+```
+
+# Data analysis
+
+## Agaro 
+
+```{r}
+sev_agaro <- sev %>% 
+  filter(site == "agaro")
+```
+
+### Boxplot
+
+```{r}
+sev_agaro %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()
+```
+
+### AUDPC vs Max. severity
+
+```{r}
+sev_agaro %>% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()
+```
+
+
+### Mixed model fit
+
+**Fit and residuals**
+
+```{r}
+library(lme4)
+m_audpc <- lmer(mean_audpc ~ variety + (1 | year), data = sev_agaro)
+
+library(DHARMa)
+simres <- simulateResiduals(m_audpc)
+plot(simres)
+```
+
+**Obtain estimates of the means and perform multiple comparison**
+
+### Scott-Knott
+
+```{r}
+library(ScottKnott)
+
+sev_audpc_agaro_sk <- with(sev_agaro,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model='y ~ x',
+                 which='x'))
+
+plot(sev_audpc_agaro_sk)
+```
+
+### Mean AUDPC
+
+```{r}
+sev_agaro_sk <- summary(sev_audpc_agaro_sk)
+```
+
+
+### Means and boxplot
+
+```{r}
+library(patchwork)
+
+# severity
+p2 <- sev_agaro %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = "", y = "AUDPC", title = "Site: Agaro", subtitle = "Severity")+
+  coord_flip()
+
+sev_agaro_sk$Means <- round(sev_agaro_sk$Means, 1)
+
+# Means table
+library(gridExtra)
+p2 + gridExtra::tableGrob(sev_agaro_sk %>% rename(Cultivar = Levels), rows = rownames("Levels"), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), "mm")))
+```
+
+## Gera
+
+```{r}
+sev_gera <- sev %>% 
+  filter(site == "gera")
+```
+
+### Boxplot
+
+```{r}
+sev_gera %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()
+```
+
+### AUDPC vs Max. severity
+
+```{r}
+sev_gera %>% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()
+```
+
+### Mixed model fit
+
+**Fit and residuals**
+
+```{r}
+m_audpc <- lmer(mean_audpc ~ variety + (1 | year), data = sev_gera)
+simres <- simulateResiduals(m_audpc)
+plot(simres)
+```
+
+**Obtain estimates of the means and perform multiple comparison**
+
+### Scott-Knott
+
+```{r fig.height=6, fig.width=12}
+sev_audpc_gera_sk <- with(sev_gera,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model='y ~ x',
+                 which='x'))
+
+plot(sev_audpc_gera_sk)
+```
+
+### Mean AUDPC
+
+```{r}
+sev_gera_sk <- summary(sev_audpc_gera_sk)
+```
+
+### Means and boxplot
+
+```{r fig.height=7.5, fig.width=6}
+# severity
+p2 <- sev_gera %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = "", y = "AUDPC", title = "Site: Gera", subtitle = "Severity")+
+  coord_flip()
+
+sev_gera_sk$Means <- round(sev_gera_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_gera_sk %>% rename(Cultivar = Levels), rows = rownames("Levels"), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), "mm")))
+```
+
+## Jimma
+
+```{r}
+sev_jimma <- sev %>% 
+  filter(site == "jimma")
+```
+
+### Boxplot
+
+```{r}
+sev_jimma %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()
+```
+
+### AUDPC vs Max. severity
+
+```{r}
+sev_jimma %>% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()
+```
+
+### Mixed model fit
+
+**Fit and residuals**
+
+```{r}
+m_audpc <- lmer(mean_audpc ~ variety + (1 | year), data = sev_jimma)
+simres <- simulateResiduals(m_audpc)
+plot(simres)
+```
+
+**Obtain estimates of the means and perform multiple comparison**
+
+### Scott-Knott
+
+```{r fig.height=5, fig.width=10}
+sev_audpc_jimma_sk <- with(sev_jimma,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model='y ~ x',
+                 which='x'))
+
+plot(sev_audpc_jimma_sk)
+```
+
+
+### Means
+
+```{r}
+sev_jimma_sk <- summary(sev_audpc_jimma_sk)
+```
+
+### Means and boxplot
+
+```{r fig.height=6, fig.width=6}
+# severity
+p2 <- sev_jimma %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = "", y = "AUDPC", title = "Site: Jimma", subtitle = "Severity")+
+  coord_flip()
+sev_jimma_sk$Means <- round(sev_jimma_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_jimma_sk %>% rename(Cultivar = Levels), rows = rownames("Levels"), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), "mm")))
+```
+
+## Metu
+
+```{r}
+sev_metu <- sev %>% 
+  filter(site == "metu")
+```
+
+### Boxplot
+
+```{r}
+sev_metu %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()
+```
+
+### AUDPC vs Max. severity
+
+```{r}
+sev_metu %>% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()
+```
+
+##### Mixed model fit
+
+**Fit and residuals**
+
+```{r}
+m_audpc <- lmer(mean_audpc ~ variety + (1 | year), data = sev_metu)
+simres <- simulateResiduals(m_audpc)
+plot(simres)
+```
+
+**Obtain estimates of the means and perform multiple comparison**
+
+### Scott-Knott
+
+```{r fig.height=5, fig.width=10}
+sev_audpc_metu_sk <- with(sev_metu,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model='y ~ x',
+                 which='x'))
+
+plot(sev_audpc_metu_sk)
+```
+
+### Mean AUDPC
+
+```{r}
+sev_metu_sk <- summary(sev_audpc_metu_sk)
+```
+
+### Means and boxplot
+
+```{r fig.height=6.25, fig.width=6}
+# severity
+p2 <- sev_metu %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = "", y = "AUDPC", title = "Site: Metu", subtitle = "Severity")+
+  coord_flip()
+sev_metu_sk$Means <- round(sev_metu_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_metu_sk %>% rename(Cultivar = Levels), rows = rownames("Levels"), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), "mm")))
+```
+
+## Tepi
+
+```{r}
+sev_tepi <- sev %>% 
+  filter(site == "tepi")
+```
+
+### Boxplot
+
+```{r}
+sev_tepi %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()
+```
+
+### AUDPC vs Max. severity
+
+```{r}
+sev_tepi %>% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()
+```
+
+### Mixed model fit
+
+**Fit and residuals**
+
+```{r}
+m_audpc <- lmer(mean_audpc ~ variety + (1 | year), data = sev_tepi)
+simres <- simulateResiduals(m_audpc)
+plot(simres)
+```
+
+**Obtain estimates of the means and perform multiple comparison**
+
+### Scott-Knott
+
+```{r}
+sev_audpc_tepi_sk <- with(sev_tepi,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model='y ~ x',
+                 which='x'))
+
+plot(sev_audpc_tepi_sk)
+```
+
+### Means
+
+```{r}
+sev_tepi_sk <- summary(sev_audpc_tepi_sk)
+```
+
+### Means and boxplot
+
+```{r}
+# severity
+p2 <- sev_tepi %>% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = "", y = "AUDPC", title = "Site: tepi", subtitle = "Severity")+
+  coord_flip()
+sev_tepi_sk$Means <- round(sev_tepi_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_tepi_sk %>% rename(Cultivar = Levels), rows = rownames("Levels"), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), "mm")))
+```
+
+## Mean AUDPC (all sites)
+
+```{r}
+
+sev_agaro_sk %>% 
+  bind_rows(sev_gera_sk, sev_jimma_sk, sev_metu_sk, sev_tepi_sk, .id = "Site") %>% 
+  remove_rownames() %>% 
+  mutate(Site = recode(Site, `1` = "Agaro", `2` = "Gera", `3` = "Jimma", `4` = "Metu", `5` = "Tepi"), 
+         Means = round(Means, digits = 1)) %>% 
+  unite(Severity, Means, `SK(5%)`, sep = " ", remove = FALSE, na.rm = FALSE) %>%
+  dplyr::select(-Means, -`SK(5%)`) %>% 
+  spread(key = Site, value = Severity) %>%
+  rename(Genotype = Levels) %>% 
+  replace(., is.na(.), "-") %>% 
+  gt::gt() %>% 
+  cols_align(
+    align = "right"
+  )
+  
+```
+
+
+
+
+
+
+
+
+

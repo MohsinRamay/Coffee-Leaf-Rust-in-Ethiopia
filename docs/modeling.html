@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Mixed Models</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Performace of coffee genotypes against leaf rust in Ethiopia</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    About
+  </a>
+</li>
+<li>
+  <a href="data.html">
+    <span class="fa fa-table"></span>
+     
+    Data
+  </a>
+</li>
+<li>
+  <a href="modeling.html">
+    <span class="fa fa-file-code-o"></span>
+     
+    Documented analysis
+  </a>
+</li>
+<li>
+  <a href="figures.html">
+    <span class="fa fa-bar-chart"></span>
+     
+    Publication-ready plots
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Mixed Models</h1>
+
+</div>
+
+
+<div id="setup" class="section level1">
+<h1>Setup</h1>
+<div id="read-data" class="section level2">
+<h2>Read data</h2>
+<pre class="r"><code>dat &lt;- read_csv(&quot;data/clr_audpc.csv&quot;)</code></pre>
+</div>
+<div id="prepare-variables" class="section level2">
+<h2>Prepare variables</h2>
+<pre class="r"><code># Calculate max. severity column
+dat1 &lt;- dat %&gt;% 
+  group_by(X1) %&gt;% 
+  mutate(max = max(`1`,`2`,`3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, `11`, `12`))
+
+# Calculate mean AUDPC and Max. severity  
+sev &lt;- dat1 %&gt;% 
+  group_by(year, site, variety, tree) %&gt;% 
+  summarize(mean_max = mean(max), mean_audpc = mean(AUDPCm))  </code></pre>
+</div>
+</div>
+<div id="data-exploration" class="section level1">
+<h1>Data exploration</h1>
+<div id="relationship-between-audpc-and-disease-severity" class="section level2">
+<h2>Relationship between AUDPC and disease severity</h2>
+<pre class="r"><code>sev %&gt;%  
+    ggplot(aes(log(mean_max), log(mean_audpc)))+
+  geom_point()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+</div>
+<div id="data-analysis" class="section level1">
+<h1>Data analysis</h1>
+<div id="agaro" class="section level2">
+<h2>Agaro</h2>
+<pre class="r"><code>sev_agaro &lt;- sev %&gt;% 
+  filter(site == &quot;agaro&quot;)</code></pre>
+<div id="boxplot" class="section level3">
+<h3>Boxplot</h3>
+<pre class="r"><code>sev_agaro %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="audpc-vs-max.-severity" class="section level3">
+<h3>AUDPC vs Max. severity</h3>
+<pre class="r"><code>sev_agaro %&gt;% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="mixed-model-fit" class="section level3">
+<h3>Mixed model fit</h3>
+<p><strong>Fit and residuals</strong></p>
+<pre class="r"><code>library(lme4)
+m_audpc &lt;- lmer(mean_audpc ~ variety + (1 | year), data = sev_agaro)
+
+library(DHARMa)
+simres &lt;- simulateResiduals(m_audpc)
+plot(simres)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><strong>Obtain estimates of the means and perform multiple comparison</strong></p>
+</div>
+<div id="scott-knott" class="section level3">
+<h3>Scott-Knott</h3>
+<pre class="r"><code>library(ScottKnott)
+
+sev_audpc_agaro_sk &lt;- with(sev_agaro,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model=&#39;y ~ x&#39;,
+                 which=&#39;x&#39;))
+
+plot(sev_audpc_agaro_sk)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="mean-audpc" class="section level3">
+<h3>Mean AUDPC</h3>
+<pre class="r"><code>sev_agaro_sk &lt;- summary(sev_audpc_agaro_sk)</code></pre>
+<pre><code>##  Levels    Means SK(5%)
+##    L-03 80.87374      a
+##   74110 69.41341      b
+##    F-59 66.69438      b
+##   74148 66.46266      b
+##    L-45 62.26834      c
+##    7440 58.37164      c
+##   74112 55.89470      c
+##    L-54 55.36701      c
+##    F-35 53.18969      c
+##   74140 28.48526      d
+##    7454 26.67095      d</code></pre>
+</div>
+<div id="means-and-boxplot" class="section level3">
+<h3>Means and boxplot</h3>
+<pre class="r"><code>library(patchwork)
+
+# severity
+p2 &lt;- sev_agaro %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = &quot;&quot;, y = &quot;AUDPC&quot;, title = &quot;Site: Agaro&quot;, subtitle = &quot;Severity&quot;)+
+  coord_flip()
+
+sev_agaro_sk$Means &lt;- round(sev_agaro_sk$Means, 1)
+
+# Means table
+library(gridExtra)
+p2 + gridExtra::tableGrob(sev_agaro_sk %&gt;% rename(Cultivar = Levels), rows = rownames(&quot;Levels&quot;), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), &quot;mm&quot;)))</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+</div>
+<div id="gera" class="section level2">
+<h2>Gera</h2>
+<pre class="r"><code>sev_gera &lt;- sev %&gt;% 
+  filter(site == &quot;gera&quot;)</code></pre>
+<div id="boxplot-1" class="section level3">
+<h3>Boxplot</h3>
+<pre class="r"><code>sev_gera %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="audpc-vs-max.-severity-1" class="section level3">
+<h3>AUDPC vs Max. severity</h3>
+<pre class="r"><code>sev_gera %&gt;% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="mixed-model-fit-1" class="section level3">
+<h3>Mixed model fit</h3>
+<p><strong>Fit and residuals</strong></p>
+<pre class="r"><code>m_audpc &lt;- lmer(mean_audpc ~ variety + (1 | year), data = sev_gera)
+simres &lt;- simulateResiduals(m_audpc)
+plot(simres)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><strong>Obtain estimates of the means and perform multiple comparison</strong></p>
+</div>
+<div id="scott-knott-1" class="section level3">
+<h3>Scott-Knott</h3>
+<pre class="r"><code>sev_audpc_gera_sk &lt;- with(sev_gera,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model=&#39;y ~ x&#39;,
+                 which=&#39;x&#39;))
+
+plot(sev_audpc_gera_sk)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-15-1.png" width="1152" /></p>
+</div>
+<div id="mean-audpc-1" class="section level3">
+<h3>Mean AUDPC</h3>
+<pre class="r"><code>sev_gera_sk &lt;- summary(sev_audpc_gera_sk)</code></pre>
+<pre><code>##  Levels     Means SK(5%)
+##    8136 26.676418      a
+##     741 15.776675      b
+##   74110 14.813473      b
+##    L-03 14.378145      b
+##   74112 12.154611      c
+##    L-55 12.126292      c
+##   74165 10.404052      c
+##     744 10.268851      c
+##    7487 10.267067      c
+##    7576  9.783390      c
+##   74158  8.223117      d
+##    7416  7.921668      d
+##    7514  7.841918      d
+##    7440  6.867222      d
+##   74148  6.853990      d
+##    7454  6.257841      d
+##   75227  5.358558      e
+##     754  3.990370      e
+##   74140  3.529444      e</code></pre>
+</div>
+<div id="means-and-boxplot-1" class="section level3">
+<h3>Means and boxplot</h3>
+<pre class="r"><code># severity
+p2 &lt;- sev_gera %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = &quot;&quot;, y = &quot;AUDPC&quot;, title = &quot;Site: Gera&quot;, subtitle = &quot;Severity&quot;)+
+  coord_flip()
+
+sev_gera_sk$Means &lt;- round(sev_gera_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_gera_sk %&gt;% rename(Cultivar = Levels), rows = rownames(&quot;Levels&quot;), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), &quot;mm&quot;)))</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-17-1.png" width="576" /></p>
+</div>
+</div>
+<div id="jimma" class="section level2">
+<h2>Jimma</h2>
+<pre class="r"><code>sev_jimma &lt;- sev %&gt;% 
+  filter(site == &quot;jimma&quot;)</code></pre>
+<div id="boxplot-2" class="section level3">
+<h3>Boxplot</h3>
+<pre class="r"><code>sev_jimma %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+<div id="audpc-vs-max.-severity-2" class="section level3">
+<h3>AUDPC vs Max. severity</h3>
+<pre class="r"><code>sev_jimma %&gt;% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="mixed-model-fit-2" class="section level3">
+<h3>Mixed model fit</h3>
+<p><strong>Fit and residuals</strong></p>
+<pre class="r"><code>m_audpc &lt;- lmer(mean_audpc ~ variety + (1 | year), data = sev_jimma)
+simres &lt;- simulateResiduals(m_audpc)
+plot(simres)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><strong>Obtain estimates of the means and perform multiple comparison</strong></p>
+</div>
+<div id="scott-knott-2" class="section level3">
+<h3>Scott-Knott</h3>
+<pre class="r"><code>sev_audpc_jimma_sk &lt;- with(sev_jimma,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model=&#39;y ~ x&#39;,
+                 which=&#39;x&#39;))
+
+plot(sev_audpc_jimma_sk)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-22-1.png" width="960" /></p>
+</div>
+<div id="means" class="section level3">
+<h3>Means</h3>
+<pre class="r"><code>sev_jimma_sk &lt;- summary(sev_audpc_jimma_sk)</code></pre>
+<pre><code>##  Levels     Means SK(5%)
+##    8136 67.844507      a
+##   74140 62.991301      b
+##   74158 62.193329      b
+##   74110 59.592731      c
+##    7454 57.863888      c
+##    7514 54.402465      d
+##    7416 53.915681      d
+##    F-59 51.909342      d
+##   74112 50.718147      d
+##    7576 47.748344      e
+##    F-35 46.476915      e
+##   75227  7.304419      f
+##   74165  6.803957      f
+##     754  5.028582      f</code></pre>
+</div>
+<div id="means-and-boxplot-2" class="section level3">
+<h3>Means and boxplot</h3>
+<pre class="r"><code># severity
+p2 &lt;- sev_jimma %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = &quot;&quot;, y = &quot;AUDPC&quot;, title = &quot;Site: Jimma&quot;, subtitle = &quot;Severity&quot;)+
+  coord_flip()
+sev_jimma_sk$Means &lt;- round(sev_jimma_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_jimma_sk %&gt;% rename(Cultivar = Levels), rows = rownames(&quot;Levels&quot;), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), &quot;mm&quot;)))</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-24-1.png" width="576" /></p>
+</div>
+</div>
+<div id="metu" class="section level2">
+<h2>Metu</h2>
+<pre class="r"><code>sev_metu &lt;- sev %&gt;% 
+  filter(site == &quot;metu&quot;)</code></pre>
+<div id="boxplot-3" class="section level3">
+<h3>Boxplot</h3>
+<pre class="r"><code>sev_metu %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+</div>
+<div id="audpc-vs-max.-severity-3" class="section level3">
+<h3>AUDPC vs Max. severity</h3>
+<pre class="r"><code>sev_metu %&gt;% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<div id="mixed-model-fit-3" class="section level5">
+<h5>Mixed model fit</h5>
+<p><strong>Fit and residuals</strong></p>
+<pre class="r"><code>m_audpc &lt;- lmer(mean_audpc ~ variety + (1 | year), data = sev_metu)
+simres &lt;- simulateResiduals(m_audpc)
+plot(simres)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p><strong>Obtain estimates of the means and perform multiple comparison</strong></p>
+</div>
+</div>
+<div id="scott-knott-3" class="section level3">
+<h3>Scott-Knott</h3>
+<pre class="r"><code>sev_audpc_metu_sk &lt;- with(sev_metu,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model=&#39;y ~ x&#39;,
+                 which=&#39;x&#39;))
+
+plot(sev_audpc_metu_sk)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-29-1.png" width="960" /></p>
+</div>
+<div id="mean-audpc-2" class="section level3">
+<h3>Mean AUDPC</h3>
+<pre class="r"><code>sev_metu_sk &lt;- summary(sev_audpc_metu_sk)</code></pre>
+<pre><code>##  Levels      Means SK(5%)
+##   74110 127.719125      a
+##   74112 110.605572      b
+##     741 105.712751      b
+##     744  98.548959      c
+##    L-03  89.498164      d
+##    F-59  75.837610      e
+##    L-54  73.135356      e
+##    7487  70.273526      f
+##    F-35  68.569806      f
+##   74165  66.271085      f
+##    L-55  66.128823      f
+##    L-04  65.061526      f
+##   74140  11.511544      g
+##   75227  10.487092      g
+##    7440  10.142476      g
+##     754   7.364677      g</code></pre>
+</div>
+<div id="means-and-boxplot-3" class="section level3">
+<h3>Means and boxplot</h3>
+<pre class="r"><code># severity
+p2 &lt;- sev_metu %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = &quot;&quot;, y = &quot;AUDPC&quot;, title = &quot;Site: Metu&quot;, subtitle = &quot;Severity&quot;)+
+  coord_flip()
+sev_metu_sk$Means &lt;- round(sev_metu_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_metu_sk %&gt;% rename(Cultivar = Levels), rows = rownames(&quot;Levels&quot;), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), &quot;mm&quot;)))</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-31-1.png" width="576" /></p>
+</div>
+</div>
+<div id="tepi" class="section level2">
+<h2>Tepi</h2>
+<pre class="r"><code>sev_tepi &lt;- sev %&gt;% 
+  filter(site == &quot;tepi&quot;)</code></pre>
+<div id="boxplot-4" class="section level3">
+<h3>Boxplot</h3>
+<pre class="r"><code>sev_tepi %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+</div>
+<div id="audpc-vs-max.-severity-4" class="section level3">
+<h3>AUDPC vs Max. severity</h3>
+<pre class="r"><code>sev_tepi %&gt;% 
+  ggplot(aes(mean_audpc, mean_max, color = variety))+
+  geom_point()</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+</div>
+<div id="mixed-model-fit-4" class="section level3">
+<h3>Mixed model fit</h3>
+<p><strong>Fit and residuals</strong></p>
+<pre class="r"><code>m_audpc &lt;- lmer(mean_audpc ~ variety + (1 | year), data = sev_tepi)
+simres &lt;- simulateResiduals(m_audpc)
+plot(simres)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p><strong>Obtain estimates of the means and perform multiple comparison</strong></p>
+</div>
+<div id="scott-knott-4" class="section level3">
+<h3>Scott-Knott</h3>
+<pre class="r"><code>sev_audpc_tepi_sk &lt;- with(sev_tepi,
+              SK(x= variety,
+                 y=mean_audpc,
+                 model=&#39;y ~ x&#39;,
+                 which=&#39;x&#39;))
+
+plot(sev_audpc_tepi_sk)</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+</div>
+<div id="means-1" class="section level3">
+<h3>Means</h3>
+<pre class="r"><code>sev_tepi_sk &lt;- summary(sev_audpc_tepi_sk)</code></pre>
+<pre><code>##     Levels    Means SK(5%)
+##       J-19 68.42657      a
+##  geisha gr 53.35601      b
+##     EIAR50 50.20696      b
+##       J-21 49.85894      b
+##       7440 48.55476      b
+##       7454 41.44446      c
+##  geisha bz 40.32492      c
+##         MI 34.58165      c
+##       F-59 33.18520      c
+##    Tepi h5 23.71149      d</code></pre>
+</div>
+<div id="means-and-boxplot-4" class="section level3">
+<h3>Means and boxplot</h3>
+<pre class="r"><code># severity
+p2 &lt;- sev_tepi %&gt;% 
+  ggplot(aes(reorder(variety, mean_audpc), mean_audpc))+
+  geom_boxplot()+
+  labs(x = &quot;&quot;, y = &quot;AUDPC&quot;, title = &quot;Site: tepi&quot;, subtitle = &quot;Severity&quot;)+
+  coord_flip()
+sev_tepi_sk$Means &lt;- round(sev_tepi_sk$Means, 1)
+
+# Means table
+p2 + gridExtra::tableGrob(sev_tepi_sk %&gt;% rename(Cultivar = Levels), rows = rownames(&quot;Levels&quot;), 
+                          theme = ttheme_minimal(padding = unit(c(4, 4.5), &quot;mm&quot;)))</code></pre>
+<p><img src="modeling_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+</div>
+</div>
+<div id="mean-audpc-all-sites" class="section level2">
+<h2>Mean AUDPC (all sites)</h2>
+<pre class="r"><code>sev_agaro_sk %&gt;% 
+  bind_rows(sev_gera_sk, sev_jimma_sk, sev_metu_sk, sev_tepi_sk, .id = &quot;Site&quot;) %&gt;% 
+  remove_rownames() %&gt;% 
+  mutate(Site = recode(Site, `1` = &quot;Agaro&quot;, `2` = &quot;Gera&quot;, `3` = &quot;Jimma&quot;, `4` = &quot;Metu&quot;, `5` = &quot;Tepi&quot;), 
+         Means = round(Means, digits = 1)) %&gt;% 
+  unite(Severity, Means, `SK(5%)`, sep = &quot; &quot;, remove = FALSE, na.rm = FALSE) %&gt;%
+  dplyr::select(-Means, -`SK(5%)`) %&gt;% 
+  spread(key = Site, value = Severity) %&gt;%
+  rename(Genotype = Levels) %&gt;% 
+  replace(., is.na(.), &quot;-&quot;) %&gt;% 
+  gt::gt() %&gt;% 
+  cols_align(
+    align = &quot;right&quot;
+  )</code></pre>
+<div id="wisrxhoalu" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#wisrxhoalu .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wisrxhoalu .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wisrxhoalu .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wisrxhoalu .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wisrxhoalu .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wisrxhoalu .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wisrxhoalu .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wisrxhoalu .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wisrxhoalu .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wisrxhoalu .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wisrxhoalu .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wisrxhoalu .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wisrxhoalu .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#wisrxhoalu .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wisrxhoalu .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wisrxhoalu .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wisrxhoalu .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wisrxhoalu .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wisrxhoalu .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wisrxhoalu .gt_left {
+  text-align: left;
+}
+
+#wisrxhoalu .gt_center {
+  text-align: center;
+}
+
+#wisrxhoalu .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wisrxhoalu .gt_font_normal {
+  font-weight: normal;
+}
+
+#wisrxhoalu .gt_font_bold {
+  font-weight: bold;
+}
+
+#wisrxhoalu .gt_font_italic {
+  font-style: italic;
+}
+
+#wisrxhoalu .gt_super {
+  font-size: 65%;
+}
+
+#wisrxhoalu .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Genotype</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Agaro</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Gera</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Jimma</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Metu</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Tepi</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_right">741</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">15.8 b</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">105.7 b</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">74110</td>
+<td class="gt_row gt_right">69.4 b</td>
+<td class="gt_row gt_right">14.8 b</td>
+<td class="gt_row gt_right">59.6 c</td>
+<td class="gt_row gt_right">127.7 a</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">74112</td>
+<td class="gt_row gt_right">55.9 c</td>
+<td class="gt_row gt_right">12.2 c</td>
+<td class="gt_row gt_right">50.7 d</td>
+<td class="gt_row gt_right">110.6 b</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">74140</td>
+<td class="gt_row gt_right">28.5 d</td>
+<td class="gt_row gt_right">3.5 e</td>
+<td class="gt_row gt_right">63 b</td>
+<td class="gt_row gt_right">11.5 g</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">74148</td>
+<td class="gt_row gt_right">66.5 b</td>
+<td class="gt_row gt_right">6.9 d</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">74158</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">8.2 d</td>
+<td class="gt_row gt_right">62.2 b</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">7416</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">7.9 d</td>
+<td class="gt_row gt_right">53.9 d</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">74165</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">10.4 c</td>
+<td class="gt_row gt_right">6.8 f</td>
+<td class="gt_row gt_right">66.3 f</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">744</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">10.3 c</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">98.5 c</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">7440</td>
+<td class="gt_row gt_right">58.4 c</td>
+<td class="gt_row gt_right">6.9 d</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">10.1 g</td>
+<td class="gt_row gt_right">48.6 b</td></tr>
+    <tr><td class="gt_row gt_right">7454</td>
+<td class="gt_row gt_right">26.7 d</td>
+<td class="gt_row gt_right">6.3 d</td>
+<td class="gt_row gt_right">57.9 c</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">41.4 c</td></tr>
+    <tr><td class="gt_row gt_right">7487</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">10.3 c</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">70.3 f</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">7514</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">7.8 d</td>
+<td class="gt_row gt_right">54.4 d</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">75227</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">5.4 e</td>
+<td class="gt_row gt_right">7.3 f</td>
+<td class="gt_row gt_right">10.5 g</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">754</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">4 e</td>
+<td class="gt_row gt_right">5 f</td>
+<td class="gt_row gt_right">7.4 g</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">7576</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">9.8 c</td>
+<td class="gt_row gt_right">47.7 e</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">8136</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">26.7 a</td>
+<td class="gt_row gt_right">67.8 a</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">EIAR50</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">50.2 b</td></tr>
+    <tr><td class="gt_row gt_right">F-35</td>
+<td class="gt_row gt_right">53.2 c</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">46.5 e</td>
+<td class="gt_row gt_right">68.6 f</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">F-59</td>
+<td class="gt_row gt_right">66.7 b</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">51.9 d</td>
+<td class="gt_row gt_right">75.8 e</td>
+<td class="gt_row gt_right">33.2 c</td></tr>
+    <tr><td class="gt_row gt_right">geisha bz</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">40.3 c</td></tr>
+    <tr><td class="gt_row gt_right">geisha gr</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">53.4 b</td></tr>
+    <tr><td class="gt_row gt_right">J-19</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">68.4 a</td></tr>
+    <tr><td class="gt_row gt_right">J-21</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">49.9 b</td></tr>
+    <tr><td class="gt_row gt_right">L-03</td>
+<td class="gt_row gt_right">80.9 a</td>
+<td class="gt_row gt_right">14.4 b</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">89.5 d</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">L-04</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">65.1 f</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">L-45</td>
+<td class="gt_row gt_right">62.3 c</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">L-54</td>
+<td class="gt_row gt_right">55.4 c</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">73.1 e</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">L-55</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">12.1 c</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">66.1 f</td>
+<td class="gt_row gt_right">-</td></tr>
+    <tr><td class="gt_row gt_right">MI</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">34.6 c</td></tr>
+    <tr><td class="gt_row gt_right">Tepi h5</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">23.7 d</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+
+
+
+Copyright 2021 Muhammad Mohsin Raza & Emerson Del Ponte 
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
