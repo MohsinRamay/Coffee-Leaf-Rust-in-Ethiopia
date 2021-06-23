@@ -397,7 +397,7 @@ site_table &lt;- read.csv(&quot;data/Sites.csv&quot;)
 # Shapefile of Ethiopia
 et &lt;- sf::st_read(&quot;data/Map/Ethiopia.shp&quot;)</code></pre>
 <pre><code>## Reading layer `Ethiopia&#39; from data source 
-##   `G:\My Drive\paper-coffee-rust-curves-Ethiopia\paper-performace-of-coffee-varieties-against-leaf-rust\data\Map\Ethiopia.shp&#39; 
+##   `C:\Users\mohsi\OneDrive\Public\Coffee-varieties-against-CLR\data\Map\Ethiopia.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 11 features and 6 fields
 ## Geometry type: MULTIPOLYGON
@@ -407,7 +407,7 @@ et &lt;- sf::st_read(&quot;data/Map/Ethiopia.shp&quot;)</code></pre>
 <pre class="r"><code># Shapefile of study sites
 sites &lt;- sf::st_read(&quot;data/Map/CLR_Sites.shp&quot;)</code></pre>
 <pre><code>## Reading layer `CLR_Sites&#39; from data source 
-##   `G:\My Drive\paper-coffee-rust-curves-Ethiopia\paper-performace-of-coffee-varieties-against-leaf-rust\data\Map\CLR_Sites.shp&#39; 
+##   `C:\Users\mohsi\OneDrive\Public\Coffee-varieties-against-CLR\data\Map\CLR_Sites.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 5 features and 6 fields
 ## Geometry type: POINT
@@ -417,11 +417,11 @@ sites &lt;- sf::st_read(&quot;data/Map/CLR_Sites.shp&quot;)</code></pre>
 </div>
 <div id="attribute-table-of-sites" class="section level2">
 <h2>Attribute table of sites</h2>
-<pre class="r"><code>tab &lt;- site_table%&gt;% 
+<pre class="r"><code>tab &lt;- site_table %&gt;% 
   dplyr::select(-Longitude, -Latitude) %&gt;%
-  rename(`Altitude (m)` = Altitude..m.,
-         `Temp (min - max)` = T.oCÿ.min...max.,
-         `Rain (mm)` = Yearly.rain..mm.)
+  rename(`Altitude (m)` = `Altitude`,
+         `Temp (min - max)` = `Temp`,
+         `Rain (mm)` = `Rain`)
 tab</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -429,21 +429,21 @@ tab</code></pre>
   </script>
 </div>
 <pre class="r"><code>library(gt)
-site_table%&gt;% 
-  dplyr::select(-Longitude, -Latitude) %&gt;%
+
+tab %&gt;% 
   gt() %&gt;% 
   cols_label(
-              Altitude..m. = html(&quot;Altitude &lt;br&gt; (m)&quot;),
-              T.oCÿ.min...max. = html(&quot;Temp&amp;deg;C &lt;br&gt; (min - max)&quot;),
-              Yearly.rain..mm. = html(&quot;Yearly rain &lt;br&gt; (min - max)&quot;)
+              `Altitude (m)` = html(&quot;Altitude &lt;br&gt; (m)&quot;),
+              `Temp (min - max)` = html(&quot;Temp&amp;deg;C &lt;br&gt; (min - max)&quot;),
+              `Rain (mm)` = html(&quot;Yearly rain &lt;br&gt; (min - max)&quot;)
             ) %&gt;%
   cols_align(align = &quot;center&quot;)</code></pre>
-<div id="jdcsjcswvu" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ufhynayvfg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#jdcsjcswvu .gt_table {
+#ufhynayvfg .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -468,7 +468,7 @@ site_table%&gt;%
   border-left-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_heading {
+#ufhynayvfg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -480,7 +480,7 @@ site_table%&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_title {
+#ufhynayvfg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -490,7 +490,7 @@ site_table%&gt;%
   border-bottom-width: 0;
 }
 
-#jdcsjcswvu .gt_subtitle {
+#ufhynayvfg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -500,13 +500,13 @@ site_table%&gt;%
   border-top-width: 0;
 }
 
-#jdcsjcswvu .gt_bottom_border {
+#ufhynayvfg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_col_headings {
+#ufhynayvfg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -521,7 +521,7 @@ site_table%&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_col_heading {
+#ufhynayvfg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -541,7 +541,7 @@ site_table%&gt;%
   overflow-x: hidden;
 }
 
-#jdcsjcswvu .gt_column_spanner_outer {
+#ufhynayvfg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -553,15 +553,15 @@ site_table%&gt;%
   padding-right: 4px;
 }
 
-#jdcsjcswvu .gt_column_spanner_outer:first-child {
+#ufhynayvfg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jdcsjcswvu .gt_column_spanner_outer:last-child {
+#ufhynayvfg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jdcsjcswvu .gt_column_spanner {
+#ufhynayvfg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -573,7 +573,7 @@ site_table%&gt;%
   width: 100%;
 }
 
-#jdcsjcswvu .gt_group_heading {
+#ufhynayvfg .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -595,7 +595,7 @@ site_table%&gt;%
   vertical-align: middle;
 }
 
-#jdcsjcswvu .gt_empty_group_heading {
+#ufhynayvfg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -610,15 +610,15 @@ site_table%&gt;%
   vertical-align: middle;
 }
 
-#jdcsjcswvu .gt_from_md > :first-child {
+#ufhynayvfg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jdcsjcswvu .gt_from_md > :last-child {
+#ufhynayvfg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jdcsjcswvu .gt_row {
+#ufhynayvfg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -637,7 +637,7 @@ site_table%&gt;%
   overflow-x: hidden;
 }
 
-#jdcsjcswvu .gt_stub {
+#ufhynayvfg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -649,7 +649,7 @@ site_table%&gt;%
   padding-left: 12px;
 }
 
-#jdcsjcswvu .gt_summary_row {
+#ufhynayvfg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -659,7 +659,7 @@ site_table%&gt;%
   padding-right: 5px;
 }
 
-#jdcsjcswvu .gt_first_summary_row {
+#ufhynayvfg .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -669,7 +669,7 @@ site_table%&gt;%
   border-top-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_grand_summary_row {
+#ufhynayvfg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -679,7 +679,7 @@ site_table%&gt;%
   padding-right: 5px;
 }
 
-#jdcsjcswvu .gt_first_grand_summary_row {
+#ufhynayvfg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -689,11 +689,11 @@ site_table%&gt;%
   border-top-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_striped {
+#ufhynayvfg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jdcsjcswvu .gt_table_body {
+#ufhynayvfg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -702,7 +702,7 @@ site_table%&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_footnotes {
+#ufhynayvfg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -716,13 +716,13 @@ site_table%&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_footnote {
+#ufhynayvfg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#jdcsjcswvu .gt_sourcenotes {
+#ufhynayvfg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -736,41 +736,41 @@ site_table%&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jdcsjcswvu .gt_sourcenote {
+#ufhynayvfg .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#jdcsjcswvu .gt_left {
+#ufhynayvfg .gt_left {
   text-align: left;
 }
 
-#jdcsjcswvu .gt_center {
+#ufhynayvfg .gt_center {
   text-align: center;
 }
 
-#jdcsjcswvu .gt_right {
+#ufhynayvfg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jdcsjcswvu .gt_font_normal {
+#ufhynayvfg .gt_font_normal {
   font-weight: normal;
 }
 
-#jdcsjcswvu .gt_font_bold {
+#ufhynayvfg .gt_font_bold {
   font-weight: bold;
 }
 
-#jdcsjcswvu .gt_font_italic {
+#ufhynayvfg .gt_font_italic {
   font-style: italic;
 }
 
-#jdcsjcswvu .gt_super {
+#ufhynayvfg .gt_super {
   font-size: 65%;
 }
 
-#jdcsjcswvu .gt_footnote_marks {
+#ufhynayvfg .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -834,7 +834,7 @@ inset &lt;- tm_shape(et) +
 ggplot() +
   geom_sf(data = sites, col = 1, size = 2) +
   coord_sf(xlim = c(35, 38), ylim = c(6.9, 8.5)) +
-  ggrepel::geom_text_repel(data = sites, aes(x = Longitude, y = Latitude, label = Site), nudge_y = 0.1, nudge_x = 0.1) +
+  ggrepel::geom_text_repel(data = sites, aes(x = Longitude, y = Latitude, label = Site), nudge_y = 0.06, nudge_x = 0.06) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   labs(x = &quot;Longitude&quot;, y = &quot;Latitude&quot;, fill = &quot;&quot;) +
@@ -922,15 +922,15 @@ audpc %&gt;%
   summarise(Severity_mean = mean(Severity, na.rm = TRUE),
             AUDPCm_mean = mean(AUDPCm, na.rm = TRUE)) %&gt;%
   ungroup() %&gt;% 
-  group_by(year,site, variety) %&gt;%
-  slice_max(Severity_mean, n = 3) %&gt;%
-  ungroup() %&gt;%
+  #group_by(year,site, variety) %&gt;%
+  #slice_max(Severity_mean, n = 3) %&gt;%
+  #ungroup() %&gt;%
   filter(Month %in% c(10, 11, 12)) %&gt;% 
   mutate(Month = recode(Month, `10` = &quot;October&quot;, `11` = &quot;November&quot;, `12` = &quot;December&quot;)) %&gt;% 
   mutate(Month = factor(Month, levels = months)) %&gt;% 
   ggplot(aes(log(Severity_mean), log(AUDPCm_mean))) +
   geom_smooth(method = &quot;lm&quot;, colour = &quot;black&quot;, se = FALSE) +
-  geom_point(aes(color = factor(year)), alpha = 0.5) +
+  geom_point(aes(color = factor(year)), size = 2, alpha = 0.5) +
   labs(x = &quot;log(Mean Severity)&quot;, y = &quot;log(Mean AUDPC)&quot;, color = &quot;Year&quot;) +
   theme(legend.position = &quot;right&quot;) +
   facet_grid(site ~ Month)</code></pre>

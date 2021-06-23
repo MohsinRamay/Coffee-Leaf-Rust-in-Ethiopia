@@ -47,24 +47,24 @@ sites <- sf::st_read("data/Map/CLR_Sites.shp")
 ## Attribute table of sites
 
 ```{r}
-tab <- site_table%>% 
+tab <- site_table %>% 
   dplyr::select(-Longitude, -Latitude) %>%
-  rename(`Altitude (m)` = Altitude..m.,
-         `Temp (min - max)` = T.oCÿ.min...max.,
-         `Rain (mm)` = Yearly.rain..mm.)
+  rename(`Altitude (m)` = `Altitude`,
+         `Temp (min - max)` = `Temp`,
+         `Rain (mm)` = `Rain`)
 tab
 ```
 
 
 ```{r}
 library(gt)
-site_table%>% 
-  dplyr::select(-Longitude, -Latitude) %>%
+
+tab %>% 
   gt() %>% 
   cols_label(
-              Altitude..m. = html("Altitude <br> (m)"),
-              T.oCÿ.min...max. = html("Temp&deg;C <br> (min - max)"),
-              Yearly.rain..mm. = html("Yearly rain <br> (min - max)")
+              `Altitude (m)` = html("Altitude <br> (m)"),
+              `Temp (min - max)` = html("Temp&deg;C <br> (min - max)"),
+              `Rain (mm)` = html("Yearly rain <br> (min - max)")
             ) %>%
   cols_align(align = "center")
 ```
@@ -93,7 +93,7 @@ inset <- tm_shape(et) +
 ggplot() +
   geom_sf(data = sites, col = 1, size = 2) +
   coord_sf(xlim = c(35, 38), ylim = c(6.9, 8.5)) +
-  ggrepel::geom_text_repel(data = sites, aes(x = Longitude, y = Latitude, label = Site), nudge_y = 0.1, nudge_x = 0.1) +
+  ggrepel::geom_text_repel(data = sites, aes(x = Longitude, y = Latitude, label = Site), nudge_y = 0.06, nudge_x = 0.06) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   labs(x = "Longitude", y = "Latitude", fill = "") +
@@ -184,15 +184,15 @@ audpc %>%
   summarise(Severity_mean = mean(Severity, na.rm = TRUE),
             AUDPCm_mean = mean(AUDPCm, na.rm = TRUE)) %>%
   ungroup() %>% 
-  group_by(year,site, variety) %>%
-  slice_max(Severity_mean, n = 3) %>%
-  ungroup() %>%
+  #group_by(year,site, variety) %>%
+  #slice_max(Severity_mean, n = 3) %>%
+  #ungroup() %>%
   filter(Month %in% c(10, 11, 12)) %>% 
   mutate(Month = recode(Month, `10` = "October", `11` = "November", `12` = "December")) %>% 
   mutate(Month = factor(Month, levels = months)) %>% 
   ggplot(aes(log(Severity_mean), log(AUDPCm_mean))) +
   geom_smooth(method = "lm", colour = "black", se = FALSE) +
-  geom_point(aes(color = factor(year)), alpha = 0.5) +
+  geom_point(aes(color = factor(year)), size = 2, alpha = 0.5) +
   labs(x = "log(Mean Severity)", y = "log(Mean AUDPC)", color = "Year") +
   theme(legend.position = "right") +
   facet_grid(site ~ Month)
