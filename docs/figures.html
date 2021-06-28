@@ -381,7 +381,8 @@ library(sf)
 library(tmap)
 library(gridExtra)
 library(grid)
-library(ggpmisc)</code></pre>
+library(ggpmisc)
+library(ggpubr)</code></pre>
 <div id="upload-data" class="section level2">
 <h2>Upload data</h2>
 <pre class="r"><code># CLR severity data
@@ -438,12 +439,12 @@ tab %&gt;%
               `Rain (mm)` = html(&quot;Yearly rain &lt;br&gt; (min - max)&quot;)
             ) %&gt;%
   cols_align(align = &quot;center&quot;)</code></pre>
-<div id="ufhynayvfg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="sbeghvlryk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ufhynayvfg .gt_table {
+#sbeghvlryk .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -468,7 +469,7 @@ tab %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_heading {
+#sbeghvlryk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -480,7 +481,7 @@ tab %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_title {
+#sbeghvlryk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -490,7 +491,7 @@ tab %&gt;%
   border-bottom-width: 0;
 }
 
-#ufhynayvfg .gt_subtitle {
+#sbeghvlryk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -500,13 +501,13 @@ tab %&gt;%
   border-top-width: 0;
 }
 
-#ufhynayvfg .gt_bottom_border {
+#sbeghvlryk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_col_headings {
+#sbeghvlryk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -521,7 +522,7 @@ tab %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_col_heading {
+#sbeghvlryk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -541,7 +542,7 @@ tab %&gt;%
   overflow-x: hidden;
 }
 
-#ufhynayvfg .gt_column_spanner_outer {
+#sbeghvlryk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -553,15 +554,15 @@ tab %&gt;%
   padding-right: 4px;
 }
 
-#ufhynayvfg .gt_column_spanner_outer:first-child {
+#sbeghvlryk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ufhynayvfg .gt_column_spanner_outer:last-child {
+#sbeghvlryk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ufhynayvfg .gt_column_spanner {
+#sbeghvlryk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -573,7 +574,7 @@ tab %&gt;%
   width: 100%;
 }
 
-#ufhynayvfg .gt_group_heading {
+#sbeghvlryk .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -595,7 +596,7 @@ tab %&gt;%
   vertical-align: middle;
 }
 
-#ufhynayvfg .gt_empty_group_heading {
+#sbeghvlryk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -610,15 +611,15 @@ tab %&gt;%
   vertical-align: middle;
 }
 
-#ufhynayvfg .gt_from_md > :first-child {
+#sbeghvlryk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ufhynayvfg .gt_from_md > :last-child {
+#sbeghvlryk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ufhynayvfg .gt_row {
+#sbeghvlryk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -637,7 +638,7 @@ tab %&gt;%
   overflow-x: hidden;
 }
 
-#ufhynayvfg .gt_stub {
+#sbeghvlryk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -649,7 +650,7 @@ tab %&gt;%
   padding-left: 12px;
 }
 
-#ufhynayvfg .gt_summary_row {
+#sbeghvlryk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -659,7 +660,7 @@ tab %&gt;%
   padding-right: 5px;
 }
 
-#ufhynayvfg .gt_first_summary_row {
+#sbeghvlryk .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -669,7 +670,7 @@ tab %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_grand_summary_row {
+#sbeghvlryk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -679,7 +680,7 @@ tab %&gt;%
   padding-right: 5px;
 }
 
-#ufhynayvfg .gt_first_grand_summary_row {
+#sbeghvlryk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -689,11 +690,11 @@ tab %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_striped {
+#sbeghvlryk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ufhynayvfg .gt_table_body {
+#sbeghvlryk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -702,7 +703,7 @@ tab %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_footnotes {
+#sbeghvlryk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -716,13 +717,13 @@ tab %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_footnote {
+#sbeghvlryk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ufhynayvfg .gt_sourcenotes {
+#sbeghvlryk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -736,41 +737,41 @@ tab %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ufhynayvfg .gt_sourcenote {
+#sbeghvlryk .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ufhynayvfg .gt_left {
+#sbeghvlryk .gt_left {
   text-align: left;
 }
 
-#ufhynayvfg .gt_center {
+#sbeghvlryk .gt_center {
   text-align: center;
 }
 
-#ufhynayvfg .gt_right {
+#sbeghvlryk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ufhynayvfg .gt_font_normal {
+#sbeghvlryk .gt_font_normal {
   font-weight: normal;
 }
 
-#ufhynayvfg .gt_font_bold {
+#sbeghvlryk .gt_font_bold {
   font-weight: bold;
 }
 
-#ufhynayvfg .gt_font_italic {
+#sbeghvlryk .gt_font_italic {
   font-style: italic;
 }
 
-#ufhynayvfg .gt_super {
+#sbeghvlryk .gt_super {
   font-size: 65%;
 }
 
-#ufhynayvfg .gt_footnote_marks {
+#sbeghvlryk .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -932,8 +933,12 @@ audpc %&gt;%
   geom_smooth(method = &quot;lm&quot;, colour = &quot;black&quot;, se = FALSE) +
   geom_point(aes(color = factor(year)), size = 2, alpha = 0.5) +
   labs(x = &quot;log(Mean Severity)&quot;, y = &quot;log(Mean AUDPC)&quot;, color = &quot;Year&quot;) +
-  theme(legend.position = &quot;right&quot;) +
-  facet_grid(site ~ Month)</code></pre>
+  ylim(0, 6) +
+  theme_bw() +
+  theme(legend.position = &quot;right&quot;, 
+        panel.grid = element_blank()) +
+  facet_grid(site ~ Month) +
+  stat_cor(method = &quot;pearson&quot;, cor.coef.name = &quot;r&quot;,  label.y = 5.5, p.accuracy = 0.001)</code></pre>
 <p><img src="figures_files/figure-html/unnamed-chunk-10-1.png" width="2100" /></p>
 </div>
 

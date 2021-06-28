@@ -21,6 +21,7 @@ library(tmap)
 library(gridExtra)
 library(grid)
 library(ggpmisc)
+library(ggpubr)
 ```
 
 
@@ -168,7 +169,7 @@ p1 + p2 +
 
 ## AUDPC vs. Max Severity 
 
-```{r fig.height=6, fig.width=7, dpi=300}
+```{r fig.height=6, fig.width=7, message=FALSE, warning=FALSE, dpi=300}
 # Specific months to select data for
 months <- c("October", "November", "December")
 
@@ -194,7 +195,12 @@ audpc %>%
   geom_smooth(method = "lm", colour = "black", se = FALSE) +
   geom_point(aes(color = factor(year)), size = 2, alpha = 0.5) +
   labs(x = "log(Mean Severity)", y = "log(Mean AUDPC)", color = "Year") +
-  theme(legend.position = "right") +
-  facet_grid(site ~ Month)
+  ylim(0, 6) +
+  theme_bw() +
+  theme(legend.position = "right", 
+        panel.grid = element_blank()) +
+  facet_grid(site ~ Month) +
+  stat_cor(method = "pearson", cor.coef.name = "r",  label.y = 5.5, p.accuracy = 0.001)
 ```
+
 
